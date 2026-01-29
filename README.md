@@ -115,3 +115,16 @@ Prompt versioning (simple mais pro)
 
 
 * Comment lancer (à compléter après) : 
+
+
+Backend
+
+cd services/catalog-service
+
+mvn spring-boot:run
+
+Frontend
+
+cd frontend/minimarket-front
+
+npm start
