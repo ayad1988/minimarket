@@ -1,4 +1,4 @@
-package com.minimarket.catalog_service.controller;
+package com.minimarket.catalogservice.controller;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.minimarket.catalog_service.dto.ProductDto;
+import com.minimarket.catalogservice.dto.ProductDto;
 
 @RestController
 public class ProductController {

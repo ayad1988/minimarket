@@ -1,0 +1,19 @@
+services:
+  catalog-service:
+    build:
+      context: ../../services/catalog-service
+    container_name: catalog-service
+    environment:
+      - SERVER_PORT=8081
+
+  api-gateway:
+    build:
+      context: ../../services/api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - catalog-service

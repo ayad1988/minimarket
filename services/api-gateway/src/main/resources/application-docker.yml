@@ -1,15 +1,9 @@
-server:
-  port: 8080
-
 spring:
-  application:
-    name: api-gateway
-
   cloud:
     gateway:
       routes:
         - id: catalog-service
-          uri: http://localhost:8081
+          uri: http://catalog-service:8081
           predicates:
             - Path=/catalog/**
           filters:

@@ -1,4 +1,4 @@
-package com.minimarket.catalog_service;
+package com.minimarket.catalogservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

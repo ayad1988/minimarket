@@ -1,4 +1,4 @@
-package com.minimarket.catalog_service.dto;
+package com.minimarket.catalogservice.dto;
 
 import java.math.BigDecimal;
 
