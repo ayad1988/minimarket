@@ -65,4 +65,44 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
     private List<ProductImage> images = new ArrayList<>();
+    
+    public static Product create(UUID id, String sku, String name, String description, String brand, String model,
+            String category, BigDecimal price, String currency, String mainImageUrl,
+            boolean active, OffsetDateTime now) {
+				Product p = new Product();
+				p.id = id;
+				p.sku = sku;
+				p.name = name;
+				p.description = description;
+				p.brand = brand;
+				p.model = model;
+				p.category = category;
+				p.price = price;
+				p.currency = currency;
+				p.mainImageUrl = mainImageUrl;
+				p.active = active;
+				p.createdAt = now;
+				p.updatedAt = now;
+				return p;
+			}
+				
+			public void update(String name, String description, String brand, String model, String category,
+			  BigDecimal price, String currency, String mainImageUrl, Boolean active, OffsetDateTime now) {
+				if (name != null) this.name = name;
+				if (description != null) this.description = description;
+				if (brand != null) this.brand = brand;
+				if (model != null) this.model = model;
+				if (category != null) this.category = category;
+				if (price != null) this.price = price;
+				if (currency != null) this.currency = currency;
+				if (mainImageUrl != null) this.mainImageUrl = mainImageUrl;
+				if (active != null) this.active = active;
+				this.updatedAt = now;
+			}
+			
+			public void replaceImages(List<ProductImage> newImages, OffsetDateTime now) {
+				this.images.clear();
+				if (newImages != null) this.images.addAll(newImages);
+				this.updatedAt = now;
+			}
 }
