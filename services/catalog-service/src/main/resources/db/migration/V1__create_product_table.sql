@@ -1,0 +1,6 @@
+CREATE TABLE product (
+  id UUID PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  price NUMERIC(10,2) NOT NULL,
+  currency VARCHAR(3) NOT NULL
+);

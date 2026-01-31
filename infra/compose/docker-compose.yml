@@ -1,10 +1,39 @@
+volumes:
+  postgres_data:
 services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: catalogdb
+      POSTGRES_USER: catalog
+      POSTGRES_PASSWORD: catalog
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catalog -d catalogdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   catalog-service:
     build:
       context: ../../services/catalog-service
     container_name: catalog-service
     environment:
       - SERVER_PORT=8081
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/catalogdb
+      - SPRING_DATASOURCE_USERNAME=catalog
+      - SPRING_DATASOURCE_PASSWORD=catalog
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   api-gateway:
     build:
@@ -16,4 +45,5 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - catalog-service
+      catalog-service:
+        condition: service_healthy

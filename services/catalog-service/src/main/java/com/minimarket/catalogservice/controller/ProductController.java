@@ -1,22 +1,44 @@
 package com.minimarket.catalogservice.controller;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.minimarket.catalogservice.dto.ProductDto;
+import com.minimarket.catalogservice.service.ProductService;
 
 @RestController
 public class ProductController {
-	@GetMapping("/products")
+	
+	private final ProductService service;
+
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
+
+    @GetMapping("/products")
     public List<ProductDto> getProducts() {
-        return List.of(
-                new ProductDto("P-001", "Casque Bluetooth", new BigDecimal("59.90"), "EUR"),
-                new ProductDto("P-002", "Clavier mécanique", new BigDecimal("89.00"), "EUR"),
-                new ProductDto("P-003", "Souris ergonomique", new BigDecimal("39.50"), "EUR")
-        );
+        return service.getAllProducts().stream()
+                .map(p -> new ProductDto(
+                        p.id(),
+                        p.sku(),
+                        p.name(),
+                        p.description(),
+                        p.brand(),
+                        p.model(),
+                        p.category(),
+                        p.price(),
+                        p.currency(),
+                        p.mainImageUrl(),
+                        p.active(),
+                        p.createdAt(),
+                        p.updatedAt(),
+                        p.images()
+                ))
+                .toList();
     }
 
 }
