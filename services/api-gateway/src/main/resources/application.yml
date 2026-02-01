@@ -14,3 +14,51 @@ spring:
             - Path=/catalog/**
           filters:
             - StripPrefix=1
+            
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+        
+      base-path: /actuator
+      
+  endpoint:      
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+  health:
+    livenessstate:
+      enabled: true
+
+    readinessstate:
+      enabled: true
+
+  server:
+    port: ${SERVER_PORT:8080}
+    
+  info:
+    env:
+      enabled: true
+info:
+  app:
+    name: ${spring.application.name}
+
+    version: 0.1.0
+    
+    description: minimarket microservices
+    
+logging:
+  level:
+    root: INFO
+
+    org:
+    springframework: INFO
+    
+    com:
+      minimarket: DEBUG
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{correlationId}] %logger{36} - %msg%n"
