@@ -1,0 +1,19 @@
+<h2>Catalogue</h2>
+
+@if (loading()) {
+  <div>Chargement...</div>
+} @else {
+  @if (page(); as p) {
+    <app-product-list [products]="p.content"></app-product-list>
+
+    <app-pagination
+      [pageNumber]="p.number"
+      [totalPages]="p.totalPages"
+      [totalElements]="p.totalElements"
+      (prev)="prev()"
+      (next)="next()">
+    </app-pagination>
+  } @else {
+    <div style="opacity:0.8;">Aucune donnée.</div>
+  }
+}

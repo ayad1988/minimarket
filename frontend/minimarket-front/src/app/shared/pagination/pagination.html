@@ -1,0 +1,8 @@
+<div style="display:flex; align-items:center; gap:12px; margin-top:12px;">
+  <button (click)="prev.emit()" [disabled]="pageNumber() <= 0">Précédent</button>
+  <button (click)="next.emit()" [disabled]="pageNumber() + 1 >= totalPages()">Suivant</button>
+
+  <span style="opacity:0.8;">
+    Page {{ pageNumber() + 1 }} / {{ totalPages() }} • Total: {{ totalElements() }}
+  </span>
+</div>
