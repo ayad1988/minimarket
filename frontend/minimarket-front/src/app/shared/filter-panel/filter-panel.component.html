@@ -1,0 +1,57 @@
+<form [formGroup]="form" (ngSubmit)="onApply()" class="filters">
+
+  <h3>Filtres</h3>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Recherche</mat-label>
+    <input matInput formControlName="q" placeholder="Nom, SKU, mot-clé…" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Catégorie</mat-label>
+    <mat-select formControlName="category">
+      <mat-option value="">Toutes</mat-option>
+      @for (c of categories(); track c) {
+        <mat-option [value]="c">{{ c }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Marque</mat-label>
+    <mat-select formControlName="brand">
+      <mat-option value="">Toutes</mat-option>
+      @for (b of brands(); track b) {
+        <mat-option [value]="b">{{ b }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>Prix min</mat-label>
+      <input matInput type="number" formControlName="minPrice" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Prix max</mat-label>
+      <input matInput type="number" formControlName="maxPrice" />
+    </mat-form-field>
+  </div>
+
+  <mat-checkbox formControlName="active">Actifs seulement</mat-checkbox>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Tri</mat-label>
+    <mat-select formControlName="sort">
+      <mat-option value="price,asc">Prix croissant</mat-option>
+      <mat-option value="price,desc">Prix décroissant</mat-option>
+      <mat-option value="name,asc">Nom A → Z</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-flat-button color="primary" type="submit">Appliquer</button>
+    <button mat-button type="button" (click)="onReset()">Réinitialiser</button>
+  </div>
+</form>

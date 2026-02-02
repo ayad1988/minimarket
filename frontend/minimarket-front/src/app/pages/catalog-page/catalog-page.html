@@ -1,19 +1,39 @@
-<h2>Catalogue</h2>
+<mat-toolbar color="primary" class="topbar">
+  <span class="brand">MiniMarket</span>
+  <span class="spacer"></span>
+  <button mat-button (click)="store.reset()">Reset</button>
+</mat-toolbar>
 
-@if (loading()) {
-  <div>Chargement...</div>
-} @else {
-  @if (page(); as p) {
-    <app-product-list [products]="p.content"></app-product-list>
+<mat-sidenav-container class="container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <app-filter-panel
+      [categories]="store.categories()"
+      [brands]="store.brands()"
+      [initial]="store.params()"
+      (apply)="store.applyFilters($event)"
+      (reset)="store.reset()">
+    </app-filter-panel>
+  </mat-sidenav>
 
-    <app-pagination
-      [pageNumber]="p.number"
-      [totalPages]="p.totalPages"
-      [totalElements]="p.totalElements"
-      (prev)="prev()"
-      (next)="next()">
-    </app-pagination>
-  } @else {
-    <div style="opacity:0.8;">Aucune donnée.</div>
-  }
-}
+  <mat-sidenav-content class="content">
+    <h2>Catalogue</h2>
+
+    @if (store.loading()) {
+      <p>Chargement…</p>
+    } @else {
+      @if (store.error(); as err) {
+        <p class="error">Erreur: {{ err }}</p>
+      }
+
+      <app-product-list [products]="store.products()"></app-product-list>
+
+      <app-pagination
+        [pageNumber]="store.pageNumber()"
+        [totalPages]="store.totalPages()"
+        [totalElements]="store.totalElements()"
+        (prev)="store.prev()"
+        (next)="store.next()">
+      </app-pagination>
+    }
+  </mat-sidenav-content>
+</mat-sidenav-container>
