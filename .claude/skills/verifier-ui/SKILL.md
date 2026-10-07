@@ -19,11 +19,11 @@ cd .claude/skills/verifier-ui && PUPPETEER_SKIP_DOWNLOAD=1 npm install
 # Boutique (captures + erreurs)
 node .claude/skills/verifier-ui/check.mjs --out <dossier_temp> / /search /product/<id> /cart
 
-# Admin (connexion Keycloak admin/admin automatique)
+# Admin (connexion automatique via la page /login : admin@minimarket.local / admin1234)
 node .claude/skills/verifier-ui/check.mjs --out <dossier_temp> --admin /admin /admin/products /admin/orders
 ```
 
-Options : `--width 400` pour le mobile, `--base <url>`, variables `KC_USER` et `KC_PASSWORD`.
+Options : `--width 400` pour le mobile, `--base <url>`, variables `MM_USER` et `MM_PASSWORD` (autre compte).
 
 Sortie : une ligne `OK` ou `KO` par page avec le titre, le fichier PNG, puis les erreurs (exception JS, `console.error`, réponse API 4xx ou 5xx). Code de retour 1 si une page est en erreur.
 
@@ -36,6 +36,6 @@ Sortie : une ligne `OK` ou `KO` par page avec le titre, le fichier PNG, puis les
 ## Pièges
 
 - `networkidle2` attend la fin des appels réseau : une page qui se rafraîchit en continu peut expirer.
-- Sélecteurs Keycloak : `#username`, `#password`, `#kc-login`.
-- Pour tester un compte sans rôle admin, le créer d'abord (voir `token-admin`) ; il doit atterrir sur `/forbidden`.
+- Page de connexion Angular : champs `#email`, `#password`, bouton `.auth form button[type=submit]`.
+- Pour tester un client (sans rôle admin) : s'inscrire via `/register`, il doit atterrir sur `/forbidden` en visitant `/admin`.
 - Les erreurs `Vite` de réoptimisation au premier chargement sont du bruit : relancer une fois.

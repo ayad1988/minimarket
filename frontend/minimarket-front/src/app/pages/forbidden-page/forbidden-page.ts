@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { AuthService } from '../../core/auth/auth.service';
         <h1>Accès refusé</h1>
         <p>Votre compte n'a pas le rôle administrateur nécessaire pour accéder à cet espace.</p>
         <a class="btn" routerLink="/">Retour à la boutique</a>
-        <button type="button" class="btn secondary" (click)="auth.logout()">Changer de compte</button>
+        <button type="button" class="btn secondary" (click)="switchAccount()">Changer de compte</button>
       </div>
     </div>
   `,
@@ -24,5 +24,11 @@ import { AuthService } from '../../core/auth/auth.service';
   `,
 })
 export class ForbiddenPage {
-  auth = inject(AuthService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
+  async switchAccount() {
+    await this.auth.logout();
+    await this.router.navigate(['/login'], { queryParams: { returnUrl: '/admin' } });
+  }
 }

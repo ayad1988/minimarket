@@ -17,10 +17,25 @@
       <button type="submit" aria-label="Lancer la recherche"><span class="material-icons">search</span></button>
     </form>
 
-    <a class="action" routerLink="/search" title="Mon compte (bientôt)">
-      <span class="material-icons">person_outline</span>
-      <span class="label"><small>Bonjour</small>Compte</span>
-    </a>
+    @if (auth.user(); as u) {
+      <div class="account">
+        <a class="action" routerLink="/account" aria-haspopup="true">
+          <span class="material-icons">person</span>
+          <span class="label"><small>Bonjour, {{ auth.displayName() }}</small>Mon compte</span>
+        </a>
+        <div class="menu" role="menu">
+          <a routerLink="/account" role="menuitem">Mon compte</a>
+          <a routerLink="/account/orders" role="menuitem">Mes commandes</a>
+          @if (auth.isAdmin()) { <a routerLink="/admin" role="menuitem">Espace admin</a> }
+          <button type="button" role="menuitem" (click)="logout()">Se déconnecter</button>
+        </div>
+      </div>
+    } @else {
+      <a class="action" routerLink="/login">
+        <span class="material-icons">person_outline</span>
+        <span class="label"><small>Bonjour</small>Se connecter</span>
+      </a>
+    }
 
     <a class="action cart" routerLink="/cart" aria-label="Panier">
       <span class="material-icons">shopping_cart</span>

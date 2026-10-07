@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
@@ -11,7 +11,13 @@ import { AuthService } from '../../core/auth/auth.service';
 })
 export class AdminLayout {
   auth = inject(AuthService);
+  private router = inject(Router);
   menuOpen = signal(false);
+
+  async logout() {
+    await this.auth.logout();
+    await this.router.navigateByUrl('/');
+  }
 
   links = [
     { path: '/admin', label: 'Tableau de bord', icon: 'dashboard', exact: true },

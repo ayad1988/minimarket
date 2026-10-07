@@ -1,6 +1,7 @@
 // Visite des pages avec Chrome, prend des captures et signale les erreurs (JS, console, API >= 400).
 // Usage: node check.mjs --out <dossier> [--admin] [--width 1360] <chemin> [<chemin> ...]
 //   ex:  node check.mjs --out C:/tmp/shots / /search /product/<id>
+//        (MM_USER / MM_PASSWORD pour un autre compte)
 //        node check.mjs --out C:/tmp/shots --admin /admin /admin/products /admin/orders
 import puppeteer from 'puppeteer-core';
 import { existsSync, mkdirSync } from 'node:fs';
@@ -32,11 +33,11 @@ page.on('console', (m) => { if (m.type() === 'error') errors.push(`console: ${m.
 page.on('response', (r) => { if (r.status() >= 400 && r.url().includes('/api/')) errors.push(`${r.status()} ${r.request().method()} ${r.url()}`); });
 
 if (admin) {
-  await page.goto(`${base}/admin`, { waitUntil: 'networkidle2' });
-  await page.waitForSelector('#username', { timeout: 20000 });
-  await page.type('#username', process.env.KC_USER ?? 'admin');
-  await page.type('#password', process.env.KC_PASSWORD ?? 'admin');
-  await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), page.click('#kc-login')]);
+  await page.goto(`${base}/login?returnUrl=/admin`, { waitUntil: 'networkidle2' });
+  await page.type('#email', process.env.MM_USER ?? 'admin@minimarket.local');
+  await page.type('#password', process.env.MM_PASSWORD ?? 'admin1234');
+  await Promise.all([page.waitForFunction(() => location.pathname.startsWith('/admin')), page.click('.auth form button[type=submit]')]);
+  await page.waitForNetworkIdle();
 }
 
 let failed = false;

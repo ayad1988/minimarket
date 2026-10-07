@@ -2,24 +2,37 @@
   "realm": "minimarket",
   "enabled": true,
   "registrationAllowed": false,
+  "registrationEmailAsUsername": true,
   "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
   "sslRequired": "none",
   "accessTokenLifespan": 900,
+  "bruteForceProtected": true,
+  "passwordPolicy": "length(8)",
   "roles": {
     "realm": [
-      { "name": "admin", "description": "Administrateur de la boutique" }
+      { "name": "admin", "description": "Administrateur de la boutique" },
+      { "name": "customer", "description": "Client de la boutique" }
     ]
   },
   "users": [
     {
-      "username": "admin",
+      "username": "admin@minimarket.local",
       "email": "admin@minimarket.local",
       "firstName": "Admin",
       "lastName": "MiniMarket",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{ "type": "password", "value": "admin", "temporary": false }],
-      "realmRoles": ["admin"]
+      "credentials": [{ "type": "password", "value": "admin1234", "temporary": false }],
+      "realmRoles": ["admin", "customer"]
+    },
+    {
+      "username": "service-account-minimarket-user-service",
+      "enabled": true,
+      "serviceAccountClientId": "minimarket-user-service",
+      "clientRoles": {
+        "realm-management": ["manage-users", "view-users", "view-realm"]
+      }
     }
   ],
   "clients": [
@@ -28,14 +41,19 @@
       "name": "MiniMarket front",
       "enabled": true,
       "publicClient": true,
-      "standardFlowEnabled": true,
-      "directAccessGrantsEnabled": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
       "redirectUris": ["http://localhost:4200/*"],
-      "webOrigins": ["http://localhost:4200"],
-      "attributes": {
-        "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4200/*"
-      }
+      "webOrigins": ["http://localhost:4200"]
+    },
+    {
+      "clientId": "minimarket-user-service",
+      "name": "user-service (creation de comptes, secret DEV)",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "dev-user-service-secret",
+      "standardFlowEnabled": false,
+      "serviceAccountsEnabled": true
     },
     {
       "clientId": "minimarket-dev-cli",

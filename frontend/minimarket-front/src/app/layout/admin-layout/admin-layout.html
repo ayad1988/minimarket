@@ -6,8 +6,8 @@
     <span class="brand">Mini<b>Market</b> <small>Admin</small></span>
     <span class="spacer"></span>
     <a class="plain" routerLink="/" target="_blank" rel="noopener">Voir la boutique <span class="material-icons">open_in_new</span></a>
-    <span class="user"><span class="material-icons">account_circle</span>{{ auth.username() }}</span>
-    <button type="button" class="logout" (click)="auth.logout()">Déconnexion</button>
+    <span class="user"><span class="material-icons">account_circle</span>{{ auth.user()?.email }}</span>
+    <button type="button" class="logout" (click)="logout()">Déconnexion</button>
   </header>
 
   <div class="body">

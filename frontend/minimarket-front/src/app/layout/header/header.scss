@@ -89,6 +89,44 @@
 
 .cart .material-icons { font-size: 30px; }
 
+.account {
+  position: relative;
+
+  .menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    min-width: 200px;
+    padding: 6px;
+    background: #fff;
+    color: var(--mm-text);
+    border: 1px solid var(--mm-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 22%);
+    z-index: 60;
+
+    a, button {
+      display: block;
+      width: 100%;
+      padding: 9px 12px;
+      border: 0;
+      background: none;
+      color: var(--mm-text);
+      text-align: left;
+      text-decoration: none;
+      font: inherit;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover { background: #f0f2f2; }
+    }
+  }
+
+  &:hover .menu, &:focus-within .menu { display: block; }
+}
+
 .count {
   position: absolute;
   top: 0;

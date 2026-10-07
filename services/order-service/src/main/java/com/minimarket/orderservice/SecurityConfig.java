@@ -29,6 +29,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(a -> a
                 .requestMatchers("/actuator/**", "/error").permitAll()
                 .requestMatchers(HttpMethod.POST, "/orders").permitAll()
+                .requestMatchers(HttpMethod.GET, "/orders/mine").authenticated()
                 .requestMatchers(HttpMethod.GET, "/orders/*").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().denyAll())

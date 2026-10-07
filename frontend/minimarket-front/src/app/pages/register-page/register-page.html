@@ -1,0 +1,55 @@
+<div class="auth">
+  <a routerLink="/" class="logo" aria-label="MiniMarket, accueil">Mini<b>Market</b></a>
+
+  <div class="card">
+    <h1>Créer un compte</h1>
+
+    @if (error(); as e) { <div class="alert" role="alert">{{ e }}</div> }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="firstName">Prénom</label>
+          <input id="firstName" formControlName="firstName" autocomplete="given-name" />
+          @if (form.controls.firstName.touched && form.controls.firstName.invalid) { <span class="err">Requis.</span> }
+        </div>
+        <div class="field">
+          <label for="lastName">Nom</label>
+          <input id="lastName" formControlName="lastName" autocomplete="family-name" />
+          @if (form.controls.lastName.touched && form.controls.lastName.invalid) { <span class="err">Requis.</span> }
+        </div>
+      </div>
+
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email" formControlName="email" autocomplete="email" />
+      @if (form.controls.email.touched && form.controls.email.invalid) { <span class="err">Saisissez une adresse e-mail valide.</span> }
+      @if (serverFields()['email']; as m) { <span class="err">{{ m }}</span> }
+
+      <label for="password">Mot de passe</label>
+      <div class="pwd">
+        <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" />
+        <button type="button" class="eye" (click)="showPassword.set(!showPassword())"
+                [attr.aria-label]="showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+          <span class="material-icons">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <span class="err">8 caractères minimum.</span>
+      } @else {
+        <span class="hint">8 caractères minimum.</span>
+      }
+      @if (serverFields()['password']; as m) { <span class="err">{{ m }}</span> }
+
+      <label for="confirm">Confirmer le mot de passe</label>
+      <input id="confirm" [type]="showPassword() ? 'text' : 'password'" formControlName="confirm" autocomplete="new-password" />
+      @if (passwordMismatch) { <span class="err">Les mots de passe ne correspondent pas.</span> }
+
+      <button type="submit" class="btn" [disabled]="loading()">{{ loading() ? 'Création…' : 'Créer mon compte' }}</button>
+    </form>
+
+    <p class="fine">En créant un compte, vous acceptez les conditions de la boutique de démonstration.</p>
+  </div>
+
+  <div class="divider"><span>Déjà client ?</span></div>
+  <a class="btn secondary wide" [routerLink]="loginLink" [queryParams]="{ returnUrl }">Se connecter</a>
+</div>

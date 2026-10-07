@@ -10,7 +10,7 @@ docker info >/dev/null 2>&1 || { echo "Docker ne répond pas: lancer Docker Desk
 docker compose up -d --build --remove-orphans "$@" || { echo "Échec du build/démarrage" >&2; exit 1; }
 
 # service -> port publié (seuls ceux-là sont testables depuis l'hôte)
-declare -A PORTS=([catalog-service]=8081 [order-service]=8082)
+declare -A PORTS=([catalog-service]=8081 [order-service]=8082 [user-service]=8084)
 targets=("$@"); [ ${#targets[@]} -eq 0 ] && targets=("${!PORTS[@]}")
 
 status=0

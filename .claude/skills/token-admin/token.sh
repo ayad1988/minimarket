@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Affiche un jeton d'accès Keycloak (realm minimarket) sur stdout. DEV uniquement.
-# Usage: token.sh [utilisateur] [mot_de_passe]   (défaut: admin / admin)
+# Usage: token.sh [utilisateur] [mot_de_passe]   (défaut: admin@minimarket.local / admin1234)
 set -euo pipefail
-USER_NAME="${1:-admin}"
-PASSWORD="${2:-admin}"
+USER_NAME="${1:-admin@minimarket.local}"
+PASSWORD="${2:-admin1234}"
 KEYCLOAK="${KEYCLOAK_URL:-http://localhost:8180}"
 
 RESPONSE=$(curl -sf -d "client_id=minimarket-dev-cli&grant_type=password&username=${USER_NAME}&password=${PASSWORD}" \

@@ -38,7 +38,7 @@ class OrderStatusTest {
 
     @Test
     void orderRejectsInvalidTransition() {
-        Order order = new Order("a@b.fr", List.of(new OrderItem("p1", 1, BigDecimal.TEN)));
+        Order order = new Order("a@b.fr", null, List.of(new OrderItem("p1", 1, BigDecimal.TEN)));
         assertThatThrownBy(() -> order.changeStatus(OrderStatus.SHIPPED))
                 .isInstanceOf(InvalidStatusTransitionException.class);
         order.changeStatus(OrderStatus.PAID);

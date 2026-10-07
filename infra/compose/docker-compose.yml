@@ -133,3 +133,23 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+
+  user-service:
+    build:
+      context: ../../services/user-service
+    container_name: user-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SERVER_PORT=8084
+      - KEYCLOAK_URL=http://keycloak:8080
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/minimarket/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    depends_on:
+      keycloak:
+        condition: service_started

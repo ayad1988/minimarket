@@ -17,6 +17,10 @@ public class Order {
     @Column(name = "customer_email", nullable = false)
     private String customerEmail;
 
+    /** Keycloak user id (sub claim) when the order was placed while signed in, otherwise null (guest). */
+    @Column(name = "customer_id")
+    private String customerId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
@@ -34,9 +38,10 @@ public class Order {
     protected Order() {
     }
 
-    public Order(String customerEmail, List<OrderItem> items) {
+    public Order(String customerEmail, String customerId, List<OrderItem> items) {
         this.id = UUID.randomUUID();
         this.customerEmail = customerEmail;
+        this.customerId = customerId;
         this.items = new ArrayList<>(items);
         this.status = OrderStatus.CREATED;
         this.createdAt = Instant.now();
@@ -55,6 +60,7 @@ public class Order {
 
     public UUID getId() { return id; }
     public String getCustomerEmail() { return customerEmail; }
+    public String getCustomerId() { return customerId; }
     public OrderStatus getStatus() { return status; }
     public BigDecimal getTotalAmount() { return totalAmount; }
     public Instant getCreatedAt() { return createdAt; }

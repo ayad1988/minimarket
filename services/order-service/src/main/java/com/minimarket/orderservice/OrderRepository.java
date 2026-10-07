@@ -15,6 +15,8 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     long countByStatus(OrderStatus status);
 
+    List<Order> findByCustomerIdOrderByCreatedAtDesc(String customerId, Pageable pageable);
+
     List<Order> findByCreatedAtGreaterThanEqual(Instant since);
 
     @Query("select coalesce(sum(o.totalAmount), 0) from Order o where o.status <> com.minimarket.orderservice.OrderStatus.CANCELLED")

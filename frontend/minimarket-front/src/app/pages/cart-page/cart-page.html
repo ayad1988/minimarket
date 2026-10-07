@@ -59,6 +59,11 @@
         <form [formGroup]="form" (ngSubmit)="checkout()">
           <label for="email">E-mail de confirmation</label>
           <input id="email" type="email" formControlName="email" placeholder="vous@exemple.com" autocomplete="email" />
+          @if (auth.authenticated()) {
+            <span class="note">Commande liée à votre compte.</span>
+          } @else {
+            <span class="note">Déjà client ? <a routerLink="/login" [queryParams]="{ returnUrl: '/cart' }">Connectez-vous</a> pour suivre vos commandes.</span>
+          }
           @if (form.controls.email.touched && form.controls.email.invalid) {
             <span class="field-error">Saisissez une adresse e-mail valide.</span>
           }

@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { OrderService } from '../../core/api/order.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { CartStore, MAX_CART_QTY } from '../../core/cart/cart.store';
 import { MoneyPipe } from '../../shared/money.pipe';
 
@@ -19,10 +20,20 @@ export class CartPage {
   cart = inject(CartStore);
   private orders = inject(OrderService);
   private router = inject(Router);
+  auth = inject(AuthService);
 
   form = inject(FormBuilder).nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
   });
+
+  constructor() {
+    // connecté: la commande est liée au compte et utilise son e-mail (non modifiable)
+    const user = this.auth.user();
+    if (user) {
+      this.form.controls.email.setValue(user.email);
+      this.form.controls.email.disable();
+    }
+  }
 
   submitting = signal(false);
   error = signal<string | null>(null);

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard } from './core/auth/admin.guard';
+import { adminGuard, authGuard, guestGuard } from './core/auth/guards';
 
 export const routes: Routes = [
   {
@@ -33,6 +33,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/cart-page/cart-page').then((m) => m.CartPage) },
       { path: 'confirmation/:id', title: 'Commande confirmée — MiniMarket',
         loadComponent: () => import('./pages/confirmation-page/confirmation-page').then((m) => m.ConfirmationPage) },
+      { path: 'login', title: 'Connexion — MiniMarket', canActivate: [guestGuard],
+        loadComponent: () => import('./pages/login-page/login-page').then((m) => m.LoginPage) },
+      { path: 'register', title: 'Créer un compte — MiniMarket', canActivate: [guestGuard],
+        loadComponent: () => import('./pages/register-page/register-page').then((m) => m.RegisterPage) },
+      { path: 'account', title: 'Mon compte — MiniMarket', canActivate: [authGuard],
+        loadComponent: () => import('./pages/account-page/account-page').then((m) => m.AccountPage) },
+      { path: 'account/orders', title: 'Mes commandes — MiniMarket', canActivate: [authGuard],
+        loadComponent: () => import('./pages/my-orders-page/my-orders-page').then((m) => m.MyOrdersPage) },
       { path: 'forbidden', title: 'Accès refusé — MiniMarket',
         loadComponent: () => import('./pages/forbidden-page/forbidden-page').then((m) => m.ForbiddenPage) },
       { path: '**', redirectTo: '' },
