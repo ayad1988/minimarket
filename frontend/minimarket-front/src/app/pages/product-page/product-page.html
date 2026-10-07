@@ -1,0 +1,82 @@
+<div class="container">
+  @if (loading()) {
+    <div class="panel skeleton">Chargement…</div>
+  } @else if (notFound() || !product()) {
+    <div class="panel empty">
+      <h2>Produit introuvable</h2>
+      <p>Ce produit n'existe plus ou le lien est incorrect.</p>
+      <a class="btn" routerLink="/search">Retour au catalogue</a>
+    </div>
+  } @else {
+    @let p = product()!;
+    @let m = meta()!;
+
+    <nav class="crumbs" aria-label="Fil d'Ariane">
+      <a routerLink="/">Accueil</a> ›
+      <a routerLink="/search" [queryParams]="{ category: p.category }">{{ category() }}</a> ›
+      <span>{{ p.name }}</span>
+    </nav>
+
+    <div class="grid">
+      <section class="gallery panel">
+        <div class="thumbs">
+          @for (g of gallery(); track $index) {
+            <button type="button" [class.on]="$index === selected()" (mouseenter)="selected.set($index)"
+                    (click)="selected.set($index)" [attr.aria-label]="'Image ' + ($index + 1)">
+              <img [src]="g" alt="" width="60" height="60" />
+            </button>
+          }
+        </div>
+        <img class="main" [src]="gallery()[selected()]" [alt]="p.name" width="700" height="700" />
+      </section>
+
+      <section class="info">
+        @if (p.brand) { <a class="brand" routerLink="/search" [queryParams]="{ brand: p.brand }">Marque : {{ p.brand }}</a> }
+        <h1>{{ p.name }}</h1>
+        <div class="rating">
+          <strong>{{ m.rating.toFixed(1) }}</strong>
+          <app-stars [rating]="m.rating" />
+          <span class="reviews">{{ m.reviews }} avis</span>
+          @if (m.bestSeller) { <span class="best">Meilleure vente</span> }
+        </div>
+        <hr />
+        <div class="price-block">
+          @if (m.discountPct) { <span class="disc">-{{ m.discountPct }}%</span> }
+          <span class="price">{{ p.price | money: p.currency }}</span>
+        </div>
+        @if (m.oldPrice; as old) {
+          <div class="old">Prix conseillé : <s>{{ old | money: p.currency }}</s></div>
+        }
+        <hr />
+        @if (p.description) {
+          <h3>À propos de cet article</h3>
+          <p class="desc">{{ p.description }}</p>
+        }
+        <dl class="specs">
+          @if (p.model) { <dt>Modèle</dt><dd>{{ p.model }}</dd> }
+          <dt>Référence</dt><dd>{{ p.sku }}</dd>
+          <dt>Catégorie</dt><dd>{{ category() }}</dd>
+        </dl>
+      </section>
+
+      <aside class="buybox panel">
+        <div class="price">{{ p.price | money: p.currency }}</div>
+        <div class="ship">Livraison <strong>GRATUITE</strong> dès 25 € d'achat</div>
+        @if (p.active) {
+          <div class="stock">En stock</div>
+          <label class="qty">
+            Quantité :
+            <select [value]="quantity()" (change)="quantity.set(+$any($event.target).value)">
+              @for (n of qtyOptions; track n) { <option [value]="n">{{ n }}</option> }
+            </select>
+          </label>
+          <button type="button" class="btn" (click)="addToCart()">{{ added() ? '✓ Ajouté au panier' : 'Ajouter au panier' }}</button>
+          <button type="button" class="btn orange" (click)="buyNow()">Acheter maintenant</button>
+        } @else {
+          <div class="out">Actuellement indisponible</div>
+        }
+        <small class="secure"><span class="material-icons">lock</span> Paiement sécurisé</small>
+      </aside>
+    </div>
+  }
+</div>

@@ -1,0 +1,80 @@
+<div class="adm-head">
+  <h1>{{ title() }}</h1>
+  <a class="adm-btn" routerLink="/admin/products">‹ Retour à la liste</a>
+</div>
+
+@if (loading()) {
+  <div class="adm-empty">Chargement…</div>
+} @else {
+  @if (error(); as e) { <div class="adm-alert" role="alert">{{ e }}</div> }
+
+  <form class="adm-card form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="row">
+      <label class="wide">Nom *
+        <input formControlName="name" />
+        @if (invalid('name')) { <span class="err">Le nom est requis (2 à 255 caractères).</span> }
+        @if (serverFields()['name']; as m) { <span class="err">{{ m }}</span> }
+      </label>
+    </div>
+
+    <div class="row">
+      <label>SKU *
+        <input formControlName="sku" [attr.aria-describedby]="isEdit ? 'sku-hint' : null" />
+        @if (isEdit) { <span class="hint" id="sku-hint">Le SKU ne peut pas être modifié.</span> }
+        @if (invalid('sku')) { <span class="err">SKU requis (3 à 64 caractères).</span> }
+        @if (serverFields()['sku']; as m) { <span class="err">{{ m }}</span> }
+      </label>
+      <label>Catégorie *
+        <select formControlName="category">
+          <option value="" disabled>Choisir…</option>
+          @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
+        </select>
+        @if (invalid('category')) { <span class="err">Choisissez une catégorie.</span> }
+      </label>
+    </div>
+
+    <div class="row">
+      <label>Marque
+        <input formControlName="brand" />
+      </label>
+      <label>Modèle
+        <input formControlName="model" />
+      </label>
+    </div>
+
+    <div class="row">
+      <label>Prix *
+        <input type="number" step="0.01" min="0" formControlName="price" />
+        @if (invalid('price')) { <span class="err">Prix requis, supérieur à 0.</span> }
+        @if (serverFields()['price']; as m) { <span class="err">{{ m }}</span> }
+      </label>
+      <label>Devise *
+        <select formControlName="currency">
+          <option value="EUR">EUR (€)</option>
+          <option value="USD">USD ($)</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="wide">URL de l'image principale
+        <input type="url" formControlName="mainImageUrl" placeholder="https://…" />
+        @if (invalid('mainImageUrl')) { <span class="err">Saisissez une URL http(s) valide.</span> }
+        @if (serverFields()['mainImageUrl']; as m) { <span class="err">{{ m }}</span> }
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="wide">Description
+        <textarea rows="4" formControlName="description"></textarea>
+      </label>
+    </div>
+
+    <label class="check"><input type="checkbox" formControlName="active" /> Produit actif (visible comme disponible en boutique)</label>
+
+    <div class="buttons">
+      <button type="submit" class="adm-btn primary" [disabled]="saving()">{{ saving() ? 'Enregistrement…' : 'Enregistrer' }}</button>
+      <a class="adm-btn" routerLink="/admin/products">Annuler</a>
+    </div>
+  </form>
+}

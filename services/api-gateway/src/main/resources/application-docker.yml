@@ -8,3 +8,7 @@ spring:
             - Path=/catalog/**
           filters:
             - StripPrefix=1
+        - id: order-service
+          uri: http://order-service:8082
+          predicates:
+            - Path=/orders/**

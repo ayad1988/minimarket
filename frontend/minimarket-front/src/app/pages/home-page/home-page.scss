@@ -1,0 +1,113 @@
+.hero {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  color: #fff;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(16px, 8vw, 120px);
+  opacity: 0;
+  transition: opacity .5s;
+  pointer-events: none;
+
+  &.active { opacity: 1; pointer-events: auto; }
+
+  .inner { max-width: 520px; }
+  h1 { font-size: clamp(26px, 4vw, 40px); margin: 0 0 8px; }
+  p { font-size: 18px; margin: 0 0 20px; opacity: .95; }
+}
+
+.nav {
+  position: absolute;
+  top: 40%;
+  background: rgb(255 255 255 / 20%);
+  border: 0;
+  color: #fff;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  z-index: 2;
+
+  &:hover { background: rgb(255 255 255 / 40%); }
+  &.prev { left: 12px; }
+  &.next { right: 12px; }
+}
+
+.dots {
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 2;
+
+  button {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border-radius: 50%;
+    border: 0;
+    background: rgb(255 255 255 / 50%);
+    cursor: pointer;
+
+    &.on { background: #fff; }
+  }
+}
+
+.fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(transparent, var(--mm-bg));
+  pointer-events: none;
+}
+
+.up { margin-top: -50px; position: relative; z-index: 3; }
+
+.cats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 8px;
+  color: var(--mm-text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: transform .15s, box-shadow .15s;
+
+  .material-icons { font-size: 36px; color: var(--mm-navy-2); }
+  &:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgb(0 0 0 / 12%); }
+}
+
+.perks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.perk {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .material-icons { font-size: 32px; color: var(--mm-green); }
+  strong, small { display: block; }
+  small { color: var(--mm-muted); }
+}

@@ -1,0 +1,82 @@
+<div class="adm-head"><h1>Commandes <small>{{ page()?.totalElements ?? '' }}</small></h1></div>
+
+<div class="tabs" role="tablist">
+  @for (t of tabs; track t.value) {
+    <button type="button" role="tab" [attr.aria-selected]="status === t.value" [class.on]="status === t.value" (click)="setTab(t.value)">
+      {{ t.label }}
+    </button>
+  }
+</div>
+
+@if (error(); as e) { <div class="adm-alert" role="alert">{{ e }}</div> }
+
+<div class="adm-card">
+  @if (loading() && !page()) {
+    <div class="adm-empty">Chargement…</div>
+  } @else if (page()?.content?.length === 0) {
+    <div class="adm-empty">Aucune commande{{ status ? ' avec ce statut' : '' }}.</div>
+  } @else {
+    <div class="adm-table-wrap">
+      <table class="adm-table" [class.loading]="loading()">
+        <thead>
+          <tr><th></th><th>Date</th><th>N°</th><th>Client</th><th class="num">Articles</th><th class="num">Total</th><th>Statut</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (o of page()?.content; track o.id) {
+            <tr>
+              <td>
+                <button type="button" class="chev" [attr.aria-expanded]="expanded() === o.id"
+                        [attr.aria-label]="'Détail de la commande ' + o.id.slice(0, 8)" (click)="toggle(o.id)">
+                  <span class="material-icons">{{ expanded() === o.id ? 'expand_less' : 'expand_more' }}</span>
+                </button>
+              </td>
+              <td>{{ o.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td><code>{{ o.id.slice(0, 8) }}</code></td>
+              <td>{{ o.customerEmail }}</td>
+              <td class="num">{{ itemCount(o) }}</td>
+              <td class="num">{{ o.totalAmount | money }}</td>
+              <td><span class="adm-badge" [class]="'adm-badge ' + o.status">{{ labels[o.status] }}</span></td>
+              <td class="actions">
+                @for (n of next(o.status); track n) {
+                  @if (n === 'CANCELLED') {
+                    @if (pendingCancel() === o.id) {
+                      <span class="ask">Annuler ?</span>
+                      <button type="button" class="adm-btn confirm" [disabled]="busyId() === o.id" (click)="move(o, n)">Oui</button>
+                      <button type="button" class="adm-btn" (click)="pendingCancel.set(null)">Non</button>
+                    } @else {
+                      <button type="button" class="adm-btn danger" (click)="pendingCancel.set(o.id)">Annuler</button>
+                    }
+                  } @else if (pendingCancel() !== o.id) {
+                    <button type="button" class="adm-btn primary" [disabled]="busyId() === o.id" (click)="move(o, n)">{{ actionLabel(n) }}</button>
+                  }
+                }
+              </td>
+            </tr>
+            @if (expanded() === o.id) {
+              <tr class="detail">
+                <td></td>
+                <td colspan="7">
+                  <table class="items">
+                    <thead><tr><th>Produit</th><th class="num">Qté</th><th class="num">Prix unitaire</th><th class="num">Sous-total</th></tr></thead>
+                    <tbody>
+                      @for (i of o.items; track $index) {
+                        <tr>
+                          <td>{{ productName(i.productId) }}</td>
+                          <td class="num">{{ i.quantity }}</td>
+                          <td class="num">{{ i.unitPrice | money }}</td>
+                          <td class="num">{{ i.unitPrice * i.quantity | money }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                  <small class="full-id">Commande {{ o.id }}</small>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [page]="pageIndex" [totalPages]="page()?.totalPages ?? 0" (pageChange)="goTo($event)" />
+  }
+</div>

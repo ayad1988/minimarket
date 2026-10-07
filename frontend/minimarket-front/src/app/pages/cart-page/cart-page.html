@@ -1,0 +1,76 @@
+<div class="container">
+  @if (cart.lines().length === 0) {
+    <div class="panel empty">
+      <span class="material-icons big">shopping_cart</span>
+      <h1>Votre panier est vide</h1>
+      <p>Découvrez nos offres et ajoutez vos produits préférés.</p>
+      <a class="btn" routerLink="/search">Continuer mes achats</a>
+    </div>
+  } @else {
+    <div class="grid">
+      <section class="panel lines">
+        <h1>Panier</h1>
+
+        <div class="free">
+          @if (missingForFree() > 0) {
+            Plus que <strong>{{ missingForFree() | money: cart.currency() }}</strong> pour la livraison gratuite
+          } @else {
+            <span class="ok">✓ Votre commande bénéficie de la livraison gratuite</span>
+          }
+          <div class="bar"><div [style.width.%]="progress()"></div></div>
+        </div>
+
+        @for (l of cart.lines(); track l.productId) {
+          <article class="line">
+            <a class="name" [routerLink]="['/product', l.productId]">
+              {{ l.name }}
+              @if (l.brand) { <small>{{ l.brand }}</small> }
+            </a>
+            <label class="qty">
+              <span class="sr">Quantité</span>
+              <select [value]="l.quantity" (change)="setQty(l.productId, $any($event.target).value)">
+                @for (n of qtyOptions; track n) { <option [value]="n">{{ n }}</option> }
+              </select>
+            </label>
+            <div class="amount">
+              <strong>{{ l.unitPrice * l.quantity | money: l.currency }}</strong>
+              @if (l.quantity > 1) { <small>{{ l.unitPrice | money: l.currency }} l'unité</small> }
+            </div>
+            <button type="button" class="remove" (click)="cart.remove(l.productId)" [attr.aria-label]="'Supprimer ' + l.name">
+              <span class="material-icons">delete_outline</span>
+            </button>
+          </article>
+        }
+
+        <div class="sub">
+          Sous-total ({{ cart.count() }} article{{ cart.count() > 1 ? 's' : '' }}) :
+          <strong>{{ cart.subtotal() | money: cart.currency() }}</strong>
+        </div>
+      </section>
+
+      <aside class="panel summary">
+        <h2>Récapitulatif</h2>
+        <dl>
+          <dt>Articles</dt><dd>{{ cart.subtotal() | money: cart.currency() }}</dd>
+          <dt>Livraison</dt><dd>{{ shipping() === 0 ? 'Gratuite' : (shipping() | money: cart.currency()) }}</dd>
+          <dt class="total">Total</dt><dd class="total">{{ total() | money: cart.currency() }}</dd>
+        </dl>
+
+        <form [formGroup]="form" (ngSubmit)="checkout()">
+          <label for="email">E-mail de confirmation</label>
+          <input id="email" type="email" formControlName="email" placeholder="vous@exemple.com" autocomplete="email" />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <span class="field-error">Saisissez une adresse e-mail valide.</span>
+          }
+
+          @if (error(); as e) { <div class="error" role="alert">{{ e }}</div> }
+
+          <button type="submit" class="btn" [disabled]="submitting()">
+            {{ submitting() ? 'Validation…' : 'Passer la commande' }}
+          </button>
+        </form>
+        <small class="note">Paiement et livraison simulés dans cette démo.</small>
+      </aside>
+    </div>
+  }
+</div>

@@ -1,0 +1,23 @@
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 28px 0 8px;
+}
+
+button {
+  min-width: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--mm-border);
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover:not(:disabled) { background: #f3f3f3; }
+  &:disabled { opacity: .45; cursor: default; }
+  &.current { background: var(--mm-navy); border-color: var(--mm-navy); color: #fff; }
+}
+
+.gap { align-self: center; color: var(--mm-muted); }

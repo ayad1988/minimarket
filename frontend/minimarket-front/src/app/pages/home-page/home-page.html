@@ -1,0 +1,44 @@
+<div class="hero" aria-roledescription="carousel">
+  @for (s of slides; track $index) {
+    <div class="slide" [class.active]="$index === current()" [style.background]="s.bg" [attr.aria-hidden]="$index !== current()">
+      <div class="inner">
+        <h1>{{ s.title }}</h1>
+        <p>{{ s.text }}</p>
+        <a class="btn orange" routerLink="/search" [queryParams]="s.query" [tabindex]="$index === current() ? 0 : -1">{{ s.cta }}</a>
+      </div>
+    </div>
+  }
+  <button type="button" class="nav prev" aria-label="Précédent" (click)="go(-1); pick(current())"><span class="material-icons">chevron_left</span></button>
+  <button type="button" class="nav next" aria-label="Suivant" (click)="go(1); pick(current())"><span class="material-icons">chevron_right</span></button>
+  <div class="dots">
+    @for (s of slides; track $index) {
+      <button type="button" [class.on]="$index === current()" [attr.aria-label]="'Diapositive ' + ($index + 1)" (click)="pick($index)"></button>
+    }
+  </div>
+  <div class="fade"></div>
+</div>
+
+<div class="container up">
+  <section class="cats">
+    @for (c of categories; track c.value) {
+      <a class="cat panel" routerLink="/search" [queryParams]="{ category: c.value }">
+        <span class="material-icons">{{ c.icon }}</span>
+        {{ c.label }}
+      </a>
+    }
+  </section>
+
+  <app-product-rail title="Meilleures offres" [params]="{ sort: 'price,asc' }" [linkParams]="{ sort: 'price,asc' }" />
+  <app-product-rail title="Électronique" [params]="{ category: 'ELECTRONICS', sort: 'name,asc' }" [linkParams]="{ category: 'ELECTRONICS' }" />
+  <app-product-rail title="Informatique, bureau et réseau" [params]="{ category: 'COMPUTERS' }" [linkParams]="{ category: 'COMPUTERS' }" />
+  <app-product-rail title="Accessoires" [params]="{ category: 'ACCESSORIES' }" [linkParams]="{ category: 'ACCESSORIES' }" />
+
+  <section class="perks panel">
+    @for (p of perks; track p.title) {
+      <div class="perk">
+        <span class="material-icons">{{ p.icon }}</span>
+        <div><strong>{{ p.title }}</strong><small>{{ p.text }}</small></div>
+      </div>
+    }
+  </section>
+</div>

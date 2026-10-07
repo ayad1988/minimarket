@@ -14,7 +14,11 @@ spring:
             - Path=/catalog/**
           filters:
             - StripPrefix=1
-            
+        - id: order-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/orders/**
+
 management:
   endpoints:
     web:

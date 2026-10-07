@@ -1,0 +1,28 @@
+.to-top {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  background: var(--mm-navy-2);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover { background: #485769; }
+}
+
+footer { background: var(--mm-navy); color: #ddd; padding: 32px 16px 16px; }
+
+.cols {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+
+  h4 { color: #fff; margin: 0 0 10px; }
+  a, span { display: block; color: #ddd; text-decoration: none; font-size: 14px; padding: 3px 0; }
+  a:hover { text-decoration: underline; }
+}
+
+.legal { text-align: center; font-size: 12px; opacity: .7; margin: 24px 0 0; }

@@ -1,0 +1,156 @@
+# Datastores: one Postgres per service + a single-node Kafka (KRaft). Dev only.
+# Credentials are plain here for local use; move them to Vault / sealed secrets for a real cluster.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: minimarket
+type: Opaque
+stringData:
+  catalog-user: catalog
+  catalog-password: catalog
+  order-user: orders
+  order-password: orders
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-catalog
+  namespace: minimarket
+spec:
+  serviceName: postgres-catalog
+  replicas: 1
+  selector:
+    matchLabels: { app: postgres-catalog }
+  template:
+    metadata:
+      labels: { app: postgres-catalog }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports: [{ containerPort: 5432 }]
+          env:
+            - { name: POSTGRES_DB, value: catalogdb }
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: db-credentials, key: catalog-user } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-credentials, key: catalog-password } }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "catalog", "-d", "catalogdb"] }
+            periodSeconds: 5
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: { requests: { storage: 1Gi } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-catalog
+  namespace: minimarket
+spec:
+  selector: { app: postgres-catalog }
+  ports: [{ port: 5432 }]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-order
+  namespace: minimarket
+spec:
+  serviceName: postgres-order
+  replicas: 1
+  selector:
+    matchLabels: { app: postgres-order }
+  template:
+    metadata:
+      labels: { app: postgres-order }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports: [{ containerPort: 5432 }]
+          env:
+            - { name: POSTGRES_DB, value: orderdb }
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: db-credentials, key: order-user } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-credentials, key: order-password } }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "orders", "-d", "orderdb"] }
+            periodSeconds: 5
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: { requests: { storage: 1Gi } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-order
+  namespace: minimarket
+spec:
+  selector: { app: postgres-order }
+  ports: [{ port: 5432 }]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  namespace: minimarket
+spec:
+  serviceName: kafka
+  replicas: 1
+  selector:
+    matchLabels: { app: kafka }
+  template:
+    metadata:
+      labels: { app: kafka }
+    spec:
+      containers:
+        - name: kafka
+          image: apache/kafka:3.8.0
+          ports:
+            - { containerPort: 9092, name: client }
+            - { containerPort: 9093, name: controller }
+          env:
+            - { name: KAFKA_NODE_ID, value: "1" }
+            - { name: KAFKA_PROCESS_ROLES, value: "broker,controller" }
+            - { name: KAFKA_CONTROLLER_QUORUM_VOTERS, value: "1@localhost:9093" }
+            - { name: KAFKA_CONTROLLER_LISTENER_NAMES, value: CONTROLLER }
+            - { name: KAFKA_LISTENERS, value: "CLIENT://:9092,CONTROLLER://:9093" }
+            - { name: KAFKA_ADVERTISED_LISTENERS, value: "CLIENT://kafka.minimarket.svc.cluster.local:9092" }
+            - { name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP, value: "CLIENT:PLAINTEXT,CONTROLLER:PLAINTEXT" }
+            - { name: KAFKA_INTER_BROKER_LISTENER_NAME, value: CLIENT }
+            - { name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR, value: "1" }
+            - { name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR, value: "1" }
+            - { name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR, value: "1" }
+          readinessProbe:
+            tcpSocket: { port: 9092 }
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/kafka/data }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: { requests: { storage: 1Gi } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: minimarket
+spec:
+  selector: { app: kafka }
+  ports: [{ port: 9092, name: client }]

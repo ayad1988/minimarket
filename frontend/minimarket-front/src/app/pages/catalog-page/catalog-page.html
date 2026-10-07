@@ -1,39 +1,91 @@
-<mat-toolbar color="primary" class="topbar">
-  <span class="brand">MiniMarket</span>
-  <span class="spacer"></span>
-  <button mat-button (click)="store.reset()">Reset</button>
-</mat-toolbar>
+<div class="container layout">
+  <aside class="filters panel">
+    <details open>
+      <summary>Filtres</summary>
 
-<mat-sidenav-container class="container">
-  <mat-sidenav mode="side" opened class="sidenav">
-    <app-filter-panel
-      [categories]="store.categories()"
-      [brands]="store.brands()"
-      [initial]="store.params()"
-      (apply)="store.applyFilters($event)"
-      (reset)="store.reset()">
-    </app-filter-panel>
-  </mat-sidenav>
+      <section>
+        <h3>Catégorie</h3>
+        <ul>
+          <li><a href="javascript:void(0)" [class.on]="!params().category" (click)="setParam({ category: null })">Toutes</a></li>
+          @for (c of categories; track c.value) {
+            <li>
+              <a href="javascript:void(0)" [class.on]="params().category === c.value"
+                 (click)="setParam({ category: c.value })">{{ c.label }}</a>
+            </li>
+          }
+        </ul>
+      </section>
 
-  <mat-sidenav-content class="content">
-    <h2>Catalogue</h2>
-
-    @if (store.loading()) {
-      <p>Chargement…</p>
-    } @else {
-      @if (store.error(); as err) {
-        <p class="error">Erreur: {{ err }}</p>
+      @if (store.brands().length) {
+        <section>
+          <h3>Marque</h3>
+          <ul>
+            <li><a href="javascript:void(0)" [class.on]="!params().brand" (click)="setParam({ brand: null })">Toutes</a></li>
+            @for (b of store.brands(); track b) {
+              <li>
+                <a href="javascript:void(0)" [class.on]="params().brand === b" (click)="setParam({ brand: b })">{{ b }}</a>
+              </li>
+            }
+          </ul>
+        </section>
       }
 
-      <app-product-list [products]="store.products()"></app-product-list>
+      <section>
+        <h3>Prix</h3>
+        <form class="price" (submit)="$event.preventDefault(); applyPrice(min.value, max.value)">
+          <input #min type="number" min="0" placeholder="Min" aria-label="Prix minimum" [value]="params().minPrice ?? ''" />
+          <span>–</span>
+          <input #max type="number" min="0" placeholder="Max" aria-label="Prix maximum" [value]="params().maxPrice ?? ''" />
+          <button type="submit" class="btn secondary">OK</button>
+        </form>
+      </section>
 
-      <app-pagination
-        [pageNumber]="store.pageNumber()"
-        [totalPages]="store.totalPages()"
-        [totalElements]="store.totalElements()"
-        (prev)="store.prev()"
-        (next)="store.next()">
-      </app-pagination>
+      <section>
+        <label class="check">
+          <input type="checkbox" [checked]="params().active" (change)="setParam({ active: $any($event.target).checked || null })" />
+          Disponibles uniquement
+        </label>
+      </section>
+
+      @if (hasFilters()) {
+        <button type="button" class="btn secondary clear" (click)="clearAll()">Effacer les filtres</button>
+      }
+    </details>
+  </aside>
+
+  <section class="results">
+    <div class="toolbar panel">
+      <div>
+        <h1>{{ title() }}</h1>
+        @if (!store.loading() && store.page()) {
+          <span class="count">{{ store.totalElements() }} résultat{{ store.totalElements() > 1 ? 's' : '' }}</span>
+        }
+      </div>
+      <label class="sort">
+        Trier par
+        <select [value]="params().sort" (change)="setParam({ sort: $any($event.target).value })">
+          <option value="price,asc">Prix croissant</option>
+          <option value="price,desc">Prix décroissant</option>
+          <option value="name,asc">Nom A → Z</option>
+          <option value="name,desc">Nom Z → A</option>
+        </select>
+      </label>
+    </div>
+
+    @if (store.error(); as err) {
+      <div class="error panel" role="alert">
+        {{ err }}
+        <button type="button" class="btn secondary" (click)="store.load(params())">Réessayer</button>
+      </div>
+    } @else if (!store.loading() && store.products().length === 0) {
+      <div class="empty panel">
+        <h2>Aucun produit trouvé</h2>
+        <p>Essayez d'autres mots-clés ou retirez certains filtres.</p>
+        <button type="button" class="btn" (click)="clearAll()">Voir tout le catalogue</button>
+      </div>
+    } @else {
+      <app-product-grid [products]="store.products()" [loading]="store.loading()" />
+      <app-pagination [page]="params().page ?? 0" [totalPages]="store.totalPages()" (pageChange)="goToPage($event)" />
     }
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </section>
+</div>

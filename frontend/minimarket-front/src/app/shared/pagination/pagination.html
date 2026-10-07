@@ -1,8 +1,14 @@
-<div style="display:flex; align-items:center; gap:12px; margin-top:12px;">
-  <button (click)="prev.emit()" [disabled]="pageNumber() <= 0">Précédent</button>
-  <button (click)="next.emit()" [disabled]="pageNumber() + 1 >= totalPages()">Suivant</button>
-
-  <span style="opacity:0.8;">
-    Page {{ pageNumber() + 1 }} / {{ totalPages() }} • Total: {{ totalElements() }}
-  </span>
-</div>
+@if (totalPages() > 1) {
+  <nav class="pager" aria-label="Pagination">
+    <button type="button" (click)="go(page() - 1)" [disabled]="page() === 0">‹ Précédent</button>
+    @for (p of items(); track $index) {
+      @if (p === -1) {
+        <span class="gap">…</span>
+      } @else {
+        <button type="button" [class.current]="p === page()" [attr.aria-current]="p === page() ? 'page' : null"
+                (click)="go(p)">{{ p + 1 }}</button>
+      }
+    }
+    <button type="button" (click)="go(page() + 1)" [disabled]="page() + 1 >= totalPages()">Suivant ›</button>
+  </nav>
+}

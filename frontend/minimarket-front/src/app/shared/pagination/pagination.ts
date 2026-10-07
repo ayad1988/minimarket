@@ -1,17 +1,33 @@
-import { Component, EventEmitter, input, Output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-pagination',
-  imports: [],
+  standalone: true,
   templateUrl: './pagination.html',
   styleUrl: './pagination.scss',
-  standalone: true
 })
 export class Pagination {
-  pageNumber = input(0);     // 0-based
+  page = input(0);          // 0-based
   totalPages = input(0);
-  totalElements = input(0);
+  pageChange = output<number>();
 
-  @Output() prev = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
+  /** Pages à afficher: première, dernière et une fenêtre autour de la page courante ("-1" = ellipse). */
+  items = computed(() => {
+    const total = this.totalPages();
+    const cur = this.page();
+    const out: number[] = [];
+    for (let i = 0; i < total; i++) {
+      if (i === 0 || i === total - 1 || Math.abs(i - cur) <= 1) {
+        out.push(i);
+      } else if (out[out.length - 1] !== -1) {
+        out.push(-1);
+      }
+    }
+    return out;
+  });
+
+  go(p: number) {
+    if (p < 0 || p >= this.totalPages() || p === this.page()) return;
+    this.pageChange.emit(p);
+  }
 }

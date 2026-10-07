@@ -1,33 +1,38 @@
-<div style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:8px;">
-  <div style="display:flex; justify-content:space-between; gap:12px;">
-    <div>
-      <strong>{{ product().name }}</strong>
+<article class="card">
+  <a class="image" [routerLink]="['/product', product().id]">
+    <img [src]="image()" [alt]="product().name" loading="lazy" width="400" height="400" />
+    @if (meta().discountPct) {
+      <span class="badge discount">-{{ meta().discountPct }}%</span>
+    }
+    @if (meta().bestSeller) {
+      <span class="badge best">Meilleure vente</span>
+    }
+  </a>
 
-      <div style="opacity:0.8; font-size: 12px;">
-        SKU: {{ product().sku }} • Cat: {{ product().category }}
-      </div>
+  <div class="body">
+    <span class="brand">{{ product().brand || ' ' }}</span>
+    <a class="title" [routerLink]="['/product', product().id]">{{ product().name }}</a>
 
-      @if (product().brand || product().model) {
-        <div style="opacity:0.8; font-size: 12px;">
-          @if (product().brand) { <span>Marque: {{ product().brand }}</span> }
-          @if (product().model) { <span> • Modèle: {{ product().model }}</span> }
-        </div>
-      }
+    <div class="rating">
+      <app-stars [rating]="meta().rating" />
+      <span class="reviews">({{ meta().reviews }})</span>
+    </div>
 
-      @if (product().description) {
-        <div style="margin-top:6px; font-size: 13px;">
-          {{ product().description }}
-        </div>
+    <div class="price-row">
+      <span class="price">{{ product().price | money: product().currency }}</span>
+      @if (meta().oldPrice; as old) {
+        <span class="old">{{ old | money: product().currency }}</span>
       }
     </div>
 
-    <div style="text-align:right; min-width:120px;">
-      <div style="font-size: 16px;">
-        <strong>{{ product().price }}</strong> {{ product().currency }}
-      </div>
-      <div style="font-size:12px; opacity:0.7;">
-        {{ product().active ? 'Actif' : 'Inactif' }}
-      </div>
-    </div>
+    <span class="delivery">Livraison gratuite dès 25 €</span>
+
+    @if (product().active) {
+      <button type="button" class="btn-cart" [class.added]="added()" (click)="add()">
+        {{ added() ? '✓ Ajouté' : 'Ajouter au panier' }}
+      </button>
+    } @else {
+      <span class="unavailable">Indisponible</span>
+    }
   </div>
-</div>
+</article>

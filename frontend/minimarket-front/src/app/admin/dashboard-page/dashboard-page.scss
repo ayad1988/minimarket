@@ -1,0 +1,73 @@
+$series: #1f6f8b; // série unique: une seule teinte; texte et valeurs restent en encre neutre
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 16px; }
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--mm-text);
+  text-decoration: none;
+
+  .label { color: var(--mm-muted); font-size: 14px; }
+  strong { font-size: 28px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  small { color: var(--mm-muted); }
+  &.link:hover { box-shadow: 0 4px 14px rgb(0 0 0 / 10%); }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+
+  .chart-card { grid-column: 1 / -1; }
+  h2 { margin: 0 0 12px; font-size: 16px; font-weight: 500; }
+}
+
+.card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; h2 { margin: 0; } }
+
+.chart {
+  position: relative;
+  svg { width: 100%; height: auto; display: block; }
+
+  .grid-line { stroke: #e6e9e9; stroke-width: 1; }
+  .axis { stroke: #b9bfbf; stroke-width: 1; }
+  .tick { fill: var(--mm-muted); font-size: 11px; font-family: inherit; }
+  .bar { fill: $series; opacity: .85; transition: opacity .1s; &.on { opacity: 1; } }
+  .bar-base { fill: $series; opacity: .85; }
+  .zero { fill: #c9cece; }
+  .hit { fill: transparent; }
+}
+
+.tip {
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid var(--mm-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 12%);
+  font-size: 13px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.muted { color: var(--mm-muted); }
+
+.status-list, .top { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.status-list li { display: grid; grid-template-columns: 96px 1fr 32px; align-items: center; gap: 10px; }
+.top li { display: grid; grid-template-columns: minmax(0, 1.2fr) 1fr 32px; align-items: center; gap: 10px; }
+.top .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+li > strong { text-align: right; font-variant-numeric: tabular-nums; }
+
+.track { height: 8px; background: #edf0f0; border-radius: 4px; overflow: hidden; }
+.fill { display: block; height: 100%; background: $series; opacity: .85; border-radius: 4px; }
+
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }

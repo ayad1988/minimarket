@@ -1,0 +1,43 @@
+<header class="top">
+  <div class="bar wrap">
+    <button type="button" class="burger" aria-label="Menu" (click)="menuOpen.set(!menuOpen())">
+      <span class="material-icons">menu</span>
+    </button>
+
+    <a routerLink="/" class="logo" aria-label="MiniMarket, accueil">Mini<b>Market</b></a>
+
+    <form class="search" role="search" (submit)="$event.preventDefault(); search(q.value, cat.value)">
+      <select #cat aria-label="Catégorie">
+        <option value="">Toutes</option>
+        @for (c of categories; track c.value) {
+          <option [value]="c.value">{{ c.label }}</option>
+        }
+      </select>
+      <input #q type="search" placeholder="Rechercher un produit, une marque…" aria-label="Rechercher" />
+      <button type="submit" aria-label="Lancer la recherche"><span class="material-icons">search</span></button>
+    </form>
+
+    <a class="action" routerLink="/search" title="Mon compte (bientôt)">
+      <span class="material-icons">person_outline</span>
+      <span class="label"><small>Bonjour</small>Compte</span>
+    </a>
+
+    <a class="action cart" routerLink="/cart" aria-label="Panier">
+      <span class="material-icons">shopping_cart</span>
+      @if (cart.count() > 0) {
+        <span class="count">{{ cart.count() }}</span>
+      }
+      <span class="label"><small>Mon</small>Panier</span>
+    </a>
+  </div>
+
+  <nav class="cats" [class.open]="menuOpen()">
+    <div class="wrap">
+      <a routerLink="/search" (click)="menuOpen.set(false)">Tous les produits</a>
+      @for (c of categories; track c.value) {
+        <a routerLink="/search" [queryParams]="{ category: c.value }" (click)="menuOpen.set(false)">{{ c.label }}</a>
+      }
+      <a routerLink="/search" [queryParams]="{ sort: 'price,asc', maxPrice: 50 }" class="deal" (click)="menuOpen.set(false)">Bons plans −50 €</a>
+    </div>
+  </nav>
+</header>
